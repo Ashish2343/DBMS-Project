@@ -49,13 +49,25 @@ const login = async (req, res) => {
         // Generate JWT with Customer_id
         const token = jwt.sign({ userId: customer.Customer_id },'kjfoh349isb2f9b2if', { expiresIn: '1h' });
         // Respond with the token and a success message
+        // localStorage.setItem('jwt_token', token);
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
+const logout = async(req,res)=>{
+    try {
+        // Remove JWT from the local storage
+        // localStorage.removeItem('jwt_token');
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     register,
     login,
+    logout
 };

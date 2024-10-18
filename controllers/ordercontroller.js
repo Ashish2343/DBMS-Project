@@ -44,12 +44,12 @@ exports.createOrder = async (req, res) => {
         } catch (error) {
             // Rollback the transaction in case of error
             await connection.rollback();
-            throw error;
+            throw error.message('Problem with transaction');
         } finally {
             // Release the connection
             connection.release();
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message }.message('some Problem'));
     }
 };
