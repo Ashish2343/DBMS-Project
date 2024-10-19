@@ -56,3 +56,36 @@ exports.addItemToCart = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
+exports.removeItemFromCart = async (req, res) => {
+    try {
+        const customerId = req.userId;
+        const { itemId } = req.body;
+
+        if (!customerId) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!itemId) {
+            return res.status(400).json({ message: 'Item ID is required' });
+        }
+
+        // Check if the item exists in the cart for this customer
+        const [existingCartItem] = await db.execute(`
+            SELECT * FROM Cart WHERE Customer_id = ? AND Item_id = ?
+        `, [customerId, itemId]);
+
+        if (existingCartItem.length === 0) {
+            return res.status(404).json({ message: 'Item not found in cart' });
+        }
+
+        // Remove the item from the cart
+        await db.execute(`
+            DELETE FROM Cart WHERE Customer_id = ? AND Item_id = ?
+        `, [customerId, itemId]);
+
+        return res.status(200).json({ message: 'Item removed from cart successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
